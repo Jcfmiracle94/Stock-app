@@ -1,0 +1,11 @@
+user_id,name,email,signup_date,account_status
+1,Alice Johnson,alice.johnson@example.com,2023-01-15,active
+2,Bob Smith,bob.smith@example.com,2023-02-20,active
+3,Charlie Brown,charlie.brown@example.com,2023-03-10,suspended
+4,Diana Prince,diana.prince@example.com,2023-04-05,active
+5,Ethan Hunt,ethan.hunt@example.com,2023-05-12,inactive
+6,Fiona Gallagher,fiona.gallagher@example.com,2023-06-25,active
+7,George Miller,george.miller@example.com,2023-07-30,active
+8,Hannah Abbott,hannah.abbott@example.com,2023-08-14,suspended
+9,Ian Wright,ian.wright@example.com,2023-09-02,active
+10,Jane Doe,jane.doe@example.com,2023-10-18,active

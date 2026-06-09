@@ -1,0 +1,91 @@
+import os
+import json
+import time
+import requests
+from datetime import datetime, timedelta
+
+# Configuration
+WEBHOOK_URL = "https://discord.com/api/webhooks/1507607044331536434/DBXk5Nuq1MWn9ROMBc-S7M3sCqD-PgyTOw676rXEY3kyAJ2ViRojOKphYb5mb7-5ty_X"
+RESUME_PATH = r"C:\Users\jcfmi\OneDrive\Desktop\Resume and cover letters\Juwan_Francois_QA_Resume.docx"
+POSTED_JOBS_FILE = "posted_jobs.json"
+
+# --- MOCK JOB DATA FOR DEMONSTRATION / INITIAL SEED ---
+JOBS_DATA = [
+    {"title": "Transaction Risk Examiner", "company": "TEEMA", "location": "Remote", "link": "https://initiosphere.org"},
+    {"title": "Sr. Reinsurance Claims Examiner", "company": "One80", "location": "Remote", "link": "https://bbinsurance.wd1.myworkdayjobs.com/en-US/Careers/job/Remote---US/Senior-Claims-Examiner--Reinsurance-_JR104693"},
+    {"title": "Small Business Underwriter", "company": "Manulife", "location": "Remote", "link": "https://manulife.wd3.myworkdayjobs.com/en-US/MFCJH_Jobs/job/CAN-Quebec---Full-Time-Remote/Small-Business-Underwriter_JR26050433"},
+    {"title": "Backend SDET (Java)", "company": "Apollo ITS", "location": "Remote", "link": "https://apollo-is.com/careers/"},
+    {"title": "AI Governance Engineer", "company": "Cyclotron", "location": "Remote", "link": "https://cyclotron.applytojob.com/apply/FIKpxF2vEM/AI-Governance-Engineer"},
+    {"title": "Health Information Specialist I", "company": "Datavant", "location": "Remote", "link": "https://boards.greenhouse.io/datavant"},
+    {"title": "Performance Engineer II", "company": "SOLV Energy", "location": "Remote", "link": "https://solvenergy.wd1.myworkdayjobs.com/en-US/SOLV_Energy_Careers/job/Performance-Engineer-II_R1844"},
+    {"title": "AWS DevOps Release Engineer", "company": "Dice/FutureTech", "location": "Atlanta, GA", "link": "https://www.dice.com/job-detail/8977377"},
+    {"title": "QA Analyst (Manual)", "company": "Saleo, Inc.", "location": "Remote (Alpharetta, GA)", "link": "https://www.saleo.io/careers"},
+    {"title": "Tricentis Tester (SAP)", "company": "Delaware Nation Industries", "location": "Atlanta, GA", "link": "https://dnigov.com/careers/"},
+    {"title": "Junior QA Analyst", "company": "Kaav Inc.", "location": "Remote", "link": "https://kaavinc.com/careers"},
+    {"title": "Manual QA Test Engineer", "company": "Purple Drive", "location": "Remote", "link": "https://purpledrive.com/careers"},
+    {"title": "Manual QA Tester", "company": "ConsultNet", "location": "Remote", "link": "https://www.consultnet.com/jobs/"}
+]
+
+def load_posted_jobs():
+    if os.path.exists(POSTED_JOBS_FILE):
+        try:
+            with open(POSTED_JOBS_FILE, 'r') as f:
+                return set(json.load(f))
+        except:
+            return set()
+    return set()
+
+def save_posted_jobs(posted_jobs):
+    with open(POSTED_JOBS_FILE, 'w') as f:
+        json.dump(list(posted_jobs), f)
+
+def send_discord_message(content):
+    payload = {"content": content}
+    try:
+        requests.post(WEBHOOK_URL, json=payload)
+    except Exception as e:
+        print(f"Error sending to Discord: {e}")
+
+def get_job_report(new_jobs):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    report = f"🚀 **Hourly Job Update - {now}**\n\n### **QA & Manual Testing (New/Verified)**\n"
+    
+    for job in new_jobs:
+        report += f"- [{job['title']} @ {job['company']}]({job['link']}) ({job['location']})\n"
+    
+    report += "\n**QA Lead Tip:** All links verified for May 23. Manual QA roles are your strongest pivot right now!"
+    return report
+
+def main():
+    print(f"[{datetime.now()}] Job Automation Script Started.")
+    posted_jobs = load_posted_jobs()
+    
+    while True:
+        now = datetime.now()
+        # Schedule: Every hour between 9:00 AM and 11:00 PM daily
+        if 9 <= now.hour <= 23:
+            # Filter for jobs we haven't posted yet
+            new_jobs_to_post = []
+            for job in JOBS_DATA:
+                job_id = f"{job['title']}|{job['company']}|{job['link']}"
+                if job_id not in posted_jobs:
+                    new_jobs_to_post.append(job)
+                    posted_jobs.add(job_id)
+            
+            if new_jobs_to_post:
+                print(f"[{now}] Posting {len(new_jobs_to_post)} new jobs...")
+                report = get_job_report(new_jobs_to_post)
+                send_discord_message(report)
+                save_posted_jobs(posted_jobs)
+            else:
+                print(f"[{now}] No new jobs to post this hour.")
+            
+            # Wait for 1 hour
+            time.sleep(3600)
+        else:
+            # Check every 15 minutes if we've entered the 9am-11pm window
+            print(f"[{now}] Outside posting window (9AM-11PM). Sleeping for 15 mins...")
+            time.sleep(900)
+
+if __name__ == "__main__":
+    main()

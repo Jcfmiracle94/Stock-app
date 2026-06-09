@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Zone App</title>
+    
+    <!-- STYLE SECTION: This is the "makeup" of our page. It makes it look pretty. -->
+    <style>
+        /* Body targets the whole page */
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; /* Helps center everything */
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; /* Makes the page full screen height */
+            margin: 0; 
+            background-color: #f0f2f5; /* A light grey background */
+        }
+        /* Container is the white box in the middle */
+        .container { 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 8px; /* Rounds the corners */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Adds a soft shadow */
+            text-align: center; 
+        }
+        /* Style for the text entry box */
+        input[type="text"] { 
+            padding: 10px; 
+            width: 250px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            margin-bottom: 1rem; 
+        }
+        /* Style for the blue button */
+        button { 
+            padding: 10px 20px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        /* Changes button color when you hover over it */
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome!</h1>
+        
+        <!-- FORM: This is where the user interacts. 
+             'action="/submit"' tells the browser to send data to our Python server's /submit path. 
+             'method="POST"' means we are "posting" (sending) information. -->
+        <form action="/submit" method="POST">
+            <!-- 'name="name"' is the ID we use in Python to find what the user typed. -->
+            <input type="text" name="name" placeholder="Enter your name" required>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

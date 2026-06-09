@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Stocks Under $100</title>
+    
+    <!-- CSS STYLE: This defines the "look and feel" of the dashboard. -->
+    <style>
+        :root {
+            --gain-color: #28a745; /* Green for profit */
+            --loss-color: #dc3545; /* Red for loss */
+            --bg-color: #f0f2f5;   /* A light, modern grey background */
+            --card-bg: #ffffff;    /* Pure white for the stock cards */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 40px 20px; 
+        }
+
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+        }
+
+        h1 { color: #1a1a1a; text-align: center; margin-bottom: 5px; font-weight: 800; }
+        .subtitle { text-align: center; color: #6c757d; margin-bottom: 40px; font-size: 1rem; }
+        
+        /* TABLE STYLING: We use 'border-separate' to allow space between rows. */
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0 15px; /* This creates the 15px vertical gap between each stock. */
+            margin-top: -15px; /* Offset the first gap */
+        }
+
+        th { 
+            text-align: left; 
+            padding: 0 25px 10px 25px; 
+            color: #888; 
+            text-transform: uppercase; 
+            font-size: 0.75rem; 
+            letter-spacing: 1.5px; 
+        }
+
+        /* Each row (TR) now looks like a separate card. */
+        td { 
+            padding: 25px; /* More padding makes the text feel less crowded. */
+            background-color: var(--card-bg);
+            border: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for hover */
+        }
+
+        /* Rounded corners for the "cards". We apply them to the first and last cells of the row. */
+        td:first-child { border-radius: 12px 0 0 12px; }
+        td:last-child { border-radius: 0 12px 12px 0; }
+
+        /* HOVER EFFECT: This makes the row "pop" when you move your mouse over it. */
+        tr:hover td { 
+            transform: translateY(-2px); /* Lifts the row up slightly */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); /* Adds a soft shadow underneath */
+            cursor: default;
+        }
+        
+        /* Specific Styles for Stock Data */
+        .ticker { font-weight: 800; color: #007bff; font-size: 1.1rem; }
+        .name { color: #6c757d; font-size: 0.85rem; margin-top: 2px; }
+        .price { font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 700; font-size: 1.1rem; }
+        
+        .gain { color: var(--gain-color); font-weight: 600; }
+        .loss { color: var(--loss-color); font-weight: 600; }
+        
+        /* The Status Pills (GAIN/LOSS) */
+        .status-pill { 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 0.7rem; 
+            font-weight: 800; 
+            letter-spacing: 0.5px;
+        }
+        .gain-bg { background-color: rgba(40, 167, 69, 0.1); color: var(--gain-color); }
+        .loss-bg { background-color: rgba(220, 53, 69, 0.1); color: var(--loss-color); }
+        
+        .update-time { text-align: center; font-size: 0.8rem; color: #adb5bd; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>US Stocks Under $100</h1>
+        <p class="subtitle">Live market tracking. Data refreshes automatically.</p>
+        
+        <table id="stockTable">
+            <thead>
+                <tr>
+                    <th>Stock Name</th>
+                    <th>Price</th>
+                    <th>Today's Change</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- This section starts EMPTY. Our JavaScript below will fill it with data. -->
+            </tbody>
+        </table>
+        <div class="update-time" id="lastUpdated">Last sync: Loading...</div>
+    </div>
+
+    <!-- JAVASCRIPT: The "Brain" that fetches new data without reloading the page. -->
+    <script>
+        async function refreshStocks() {
+            try {
+                const response = await fetch('/api/stocks');
+                const stocks = await response.json();
+                const tbody = document.querySelector('#stockTable tbody');
+                
+                // Sort so the biggest gainers stay at the top.
+                stocks.sort((a, b) => b.percent_change - a.percent_change);
+
+                tbody.innerHTML = '';
+                stocks.forEach(stock => {
+                    if (stock.price < 100) {
+                        const isGain = stock.change >= 0;
+                        
+                        const row = `
+                            <tr>
+                                <td>
+                                    <div class="ticker">${stock.ticker}</div>
+                                    <div class="name">${stock.name}</div>
+                                </td>
+                                <td class="price">$${stock.price.toFixed(2)}</td>
+                                <td>
+                                    <div class="${isGain ? 'gain' : 'loss'}">
+                                        ${isGain ? '+' : ''}${stock.change.toFixed(2)} (${stock.percent_change.toFixed(2)}%)
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill ${isGain ? 'gain-bg' : 'loss-bg'}">
+                                        ${isGain ? 'GAIN' : 'LOSS'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    }
+                });
+                
+                document.getElementById('lastUpdated').innerText = 'Last sync: ' + new Date().toLocaleTimeString();
+            } catch (error) {
+                console.error('Error updating stocks:', error);
+            }
+        }
+
+        // Run once now, then every 30 seconds.
+        refreshStocks();
+        setInterval(refreshStocks, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Time Zones</title>
+    <style>
+        /* Basic styling to make the table look clean and organized */
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; padding: 20px; }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        h1 { text-align: center; color: #333; }
+        .search-box { 
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            box-sizing: border-box; /* Ensures padding doesn't make box too wide */
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        tr:hover { background-color: #f9f9f9; } /* Highlights row when you hover */
+        .back-link { display: block; text-align: center; margin-top: 20px; text-decoration: none; color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Current Times Around the World</h1>
+        
+        <!-- SEARCH BOX: This lets users filter the list instantly. -->
+        <input type="text" id="searchInput" class="search-box" placeholder="Search for a timezone (e.g., London)...">
+        
+        <table id="timeTable">
+            <thead>
+                <tr>
+                    <th>Time Zone</th>
+                    <th>Current Date & Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- JINJA TEMPLATE: The stuff in {% %} and {{ }} is special.
+                     It tells Python: "Loop through every time in the list I sent you and make a table row for each." -->
+                {% for item in times %}
+                <tr>
+                    <td>{{ item.zone }}</td> <!-- This puts the Zone Name here -->
+                    <td>{{ item.time }}</td> <!-- This puts the actual Time here -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <a href="/" class="back-link">← Back to Home</a>
+    </div>
+
+    <!-- JAVASCRIPT: This is the "interactivity" part of the page. -->
+    <script>
+        // We tell the computer: "Listen for when the user types something in the search box."
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase(); // Convert what they typed to lowercase
+            let rows = document.querySelectorAll('#timeTable tbody tr'); // Find all table rows
+            
+            // For each row, check if the zone name matches the search text.
+            rows.forEach(row => {
+                let zone = row.cells[0].textContent.toLowerCase();
+                if (zone.includes(filter)) {
+                    row.style.display = ''; // Show the row if it matches
+                } else {
+                    row.style.display = 'none'; // Hide the row if it doesn't
+                }
+            });
+        });
+    </script>
+</body>
+</html>
