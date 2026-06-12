@@ -21,8 +21,8 @@ SERPER_API_KEY = "465dd23e1e1816618110e6018adc31597456177c"
 # Common headers to prevent blocks
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
-CATEGORIES = ["quality-assurance", "data", "software-dev", "business"]
-KEYWORDS_SEARCH = ["manual testing", "underwriter", "risk examiner", "metrology"]
+CATEGORIES = ["quality-assurance", "data", "software-dev", "business", "engineering", "customer-support"]
+KEYWORDS_SEARCH = ["manual testing", "underwriter", "risk examiner", "metrology", "QA", "Software Tester", "Credit Risk Analyst", "Quality Assurance", "Building Automation", "Data Center Technician", "HVAC Apprentice", "Field Service Technician"]
 
 REMOTIVE_BASE_API = "https://remotive.com/api/remote-jobs"
 ARBEITNOW_API = "https://www.arbeitnow.com/api/job-board-api"
@@ -37,7 +37,8 @@ QA_KEYWORDS = [
     "qa", "manual", "tester", "quality assurance", "testing", "quality control", "test engineer",
     "risk examiner", "underwriter", "metrology", "sdet", "assurance engineer", "chaos performance",
     "reliability engineer", "release engineer", "health information specialist", "entry level", "junior",
-    "claims examiner", "reinsurance", "governance", "associate", "mid level", "mid-level"
+    "claims examiner", "reinsurance", "governance", "associate", "mid level", "mid-level", "backend sdet", "manual tester", "automation",
+    "building automation", "controls technician", "bas technician", "ddc technician", "data center technician", "hvac apprentice", "hvac helper", "field service technician"
 ]
 
 # Exclusion Keywords (To filter out high-level roles)
